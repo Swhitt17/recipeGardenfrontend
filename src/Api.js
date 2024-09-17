@@ -77,7 +77,7 @@ class CapstoneApi{
 
     static async postList(newItem){
       console.log(newItem, "data")
-        let res = await this.request(`lists`, {item:newItem, parse:true} , "post" );
+        let res = await this.request(`lists`, {item:newItem,aisle:"", parse:true} , "post" );
         console.log(res)
         return res;
     }

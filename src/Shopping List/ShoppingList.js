@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const ShoppingList = () => {
 
-
+    const [list, setList] = useState([]);
    const [items, setItems] = useState("");
     const [start, setStart ] = useState("")
     const [end, setEnd] = useState("")
@@ -22,29 +22,28 @@ console.log(items, "before mount")
 
     async function show(){
            let itemsRes = await CapstoneApi.getList();
-           setItems(itemsRes);  
-        console.log(items,"items during mount")
+           setList(itemsRes.aisles); 
     }
    
     
     async function addItem (newItem){
-        await CapstoneApi.postList(newItem)
-        setItems(items => [...items, newItem])
+        let res =  await CapstoneApi.postList(newItem)
+          const obj = list[list.length-1]
+          const updatedItems = [...obj.items]
+          updatedItems.push(res)
+          setList(list => [...list,{...obj,items:updatedItems}])
+          
     }
 
    
     async function generate({startDate, endDate}){
-         console.log(startDate, "start")
-         console.log(endDate, "end")
         setStart(startDate)
         setEnd(endDate)
         let plans = await CapstoneApi.generateList(startDate, endDate);
-        console.log(plans)
         setItems(plans);
     }
 
      async function remove(id){
-        console.log("removing:", id)
         await CapstoneApi.removeFromList(+id)
         setItems(items.filter((_,index) => index !== id))
     }
@@ -55,12 +54,11 @@ console.log(items, "before mount")
         <div className="ShoppingList">
             <h2 className="ShoppingList-title">Shopping List</h2>
            
-            {items.length > 0 ? (
+            {list.length > 0 ? (
                 <>
                 <div className="ShoppingList-list">
                     <ul className="list">
-                        <div className="vertical"></div>  
-                     {items.aisles.map((item, index) => (
+                     {list.length > 0 && list.map((item, index) => (
                         <div key={index}>
                         {item.items.map((t, i) => (
                             <> 
